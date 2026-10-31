@@ -19,7 +19,8 @@
     "defaults": {
       "width": 480,
       "heightPercent": 60,
-      "avatar": ""
+      "avatar": "",
+      "iconColor": "#0079f3"
     },
     "schema": [
       {
@@ -46,6 +47,13 @@
         "label": "Avatar image path (empty = bundled)",
         "defaultValue": "",
         "description": "Absolute or ~/ path to a square PNG of your own Muse avatar."
+      },
+      {
+        "key": "iconColor",
+        "type": "string",
+        "label": "Icon color",
+        "defaultValue": "#0079f3",
+        "description": "Color of the default Muse mark: \"theme\" follows the bar foreground like other icons, \"accent\"/\"urgent\" follow those theme roles, any hex or CSS color pins it. Ignored when an avatar image is set."
       }
     ]
   }

@@ -56,9 +56,14 @@ Set from the bar's widget settings, or from a terminal:
 omarchy bar set telep.muse width 560             # dropdown width in px, 360-1200 (default 480)
 omarchy bar set telep.muse heightPercent 70      # dropdown height, % of the screen, 30-90 (default 60)
 omarchy bar set telep.muse avatar ~/Pictures/my-muse.png
+omarchy bar set telep.muse iconColor theme       # mark color: brand blue #0079f3 by default
 ```
 
 Size changes apply the next time the dropdown opens.
+
+### The mark's color
+
+`iconColor` decides how the default Muse mark is painted: `theme` follows the bar's foreground (the same off-white/accent tones every other icon takes from the active theme), `accent`/`urgent` follow those theme roles, and any hex or CSS color (the default `#0079f3` brand blue) pins it regardless of theme. It is applied as a flat color over the mark's shape; a custom `avatar` image always keeps its own pixels.
 
 ### Your own avatar
 
@@ -77,7 +82,7 @@ Muse has no public API and the Omarchy shell cannot host a web view, so the drop
 |---|---|
 | `BarWidget.qml` | Draws the avatar, works out where the dropdown goes, listens for Hyprland's `activespecial` event, and shows the `pop out` tab while the dropdown is down |
 | `bin/muse-toggle` | Registers a named runtime window rule with `hyprctl eval`, launches the web app with `omarchy-launch-webapp`, toggles the workspace, and handles pop-out |
-| `muse.png` | The default bar icon |
+| `muse.png` | The default bar icon, painted flat via the `iconColor` setting (brand blue `#0079f3` default, or `theme` to follow the bar foreground) |
 
 The window rule is registered at runtime, every launch, so the plugin never edits your Hyprland config and a config reload cannot break it.
 

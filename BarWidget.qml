@@ -1,4 +1,5 @@
 import QtQuick
+import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
@@ -17,6 +18,20 @@ BarWidget {
   readonly property int dropHeight: Math.round((screen ? screen.height : 1200) * Number(setting("heightPercent", 60)) / 100)
   readonly property int dropTop: (bar && bar.position === "top" ? barSize : 0) + Style.space(8)
   readonly property string avatar: String(setting("avatar", ""))
+
+  // Default-mark color. "theme" follows the bar's own foreground (how the
+  // rest of the bar paints), "accent"/"urgent" follow those theme roles, a
+  // hex or CSS color pins it (brand blue by default). Invalid values fall
+  // back to the brand blue; ignored when an avatar image is set.
+  function resolveIconColor() {
+    var c = String(setting("iconColor", "#0079f3")).trim().toLowerCase()
+    if (c === "" || c === "theme" || c === "foreground") return root.bar ? root.bar.barForeground : Color.foreground
+    if (c === "accent") return Color.accent
+    if (c === "urgent") return root.bar ? root.bar.urgent : Color.urgent
+    if (/^#?([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/.test(c) || /^[a-z]+$/.test(c)) return c
+    return "#0079f3"
+  }
+  readonly property color iconColor: resolveIconColor()
 
   readonly property var screen: QsWindow.window ? QsWindow.window.screen : null
   readonly property string toggleBin: Qt.resolvedUrl("bin/muse-toggle").toString().replace("file://", "")
@@ -49,6 +64,10 @@ BarWidget {
     tooltipText: "Muse"
     onPressed: root.toggle()
 
+    // The Muse mark is painted flat from its bundled PNG used as an alpha
+    // mask, in the color resolved from the iconColor setting (brand blue
+    // #0079f3 by default; "theme" makes it follow the bar foreground like
+    // other bar icons). A user-set avatar keeps its own pixels.
     Image {
       id: icon
       anchors.centerIn: parent
@@ -57,6 +76,15 @@ BarWidget {
       smooth: true
       mipmap: true
       source: root.avatar !== "" ? "file://" + root.avatar.replace(/^~/, Quickshell.env("HOME")) : Qt.resolvedUrl("muse.png")
+      visible: root.avatar !== ""
+      layer.enabled: root.avatar === ""
+    }
+
+    ColorOverlay {
+      anchors.fill: icon
+      visible: root.avatar === ""
+      source: icon
+      color: root.iconColor
     }
   }
 
